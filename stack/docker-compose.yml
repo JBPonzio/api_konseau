@@ -2,12 +2,13 @@ version: '3'
 
 services:
     adminer:
-        container_name: adminer
+        container_name: "stack_adminer"
         image: adminer
         restart: always
         ports:
             - "8080:8080"
     postgres:
+        container_name: "stack_pg"
         image: postgres:14.1-alpine
         restart: always
         environment:
@@ -18,7 +19,7 @@ services:
         volumes:
             - db:/var/lib/postgresql/data
     php:
-        container_name: "php"
+        container_name: "stack_php"
         build:
             context: ./php
         depends_on:
@@ -30,7 +31,7 @@ services:
             - ${APP_FOLDER}:/var/www
 
     nginx:
-        container_name: "nginx"
+        container_name: "stack_nginx"
         build:
             context: ./nginx
         volumes:
