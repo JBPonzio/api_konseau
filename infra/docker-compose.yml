@@ -18,7 +18,7 @@ services:
         volumes:
             - db:/var/lib/postgresql/data
     php:
-        container_name: "php"
+        container_name: "php-fpm"
         build:
             context: ./php
         depends_on:
