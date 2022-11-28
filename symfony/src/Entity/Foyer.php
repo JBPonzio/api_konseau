@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: FoyerRepository::class)]
-class Foyer
+class Foyer implements \JsonSerializable
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -72,5 +72,14 @@ class Foyer
         }
 
         return $this;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'nbPersonnes' => $this->getFoyNbPersonnes(),
+            'consosFoyer' => $this->getFoyConsommations(),
+        ];
     }
 }

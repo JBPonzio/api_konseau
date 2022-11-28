@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Table(name: 'consommation')]
 #[ORM\Entity(repositoryClass: ConsommationRepository::class)]
-class Consommation
+class Consommation implements \JsonSerializable
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -24,6 +24,12 @@ class Consommation
     #[ORM\ManyToOne(inversedBy: 'foy_consommations')]
     #[ORM\JoinColumn(name: "foyer_id", referencedColumnName: "foy_id" ,nullable: false)]
     private ?Foyer $csm_foyer = null;
+
+    public function __construct(int $csm_litres)
+    {
+        $this->csm_litres = $csm_litres;
+        $this->csm_date = new \DateTime();
+    }
 
     public function getId(): ?int
     {
@@ -64,5 +70,15 @@ class Consommation
         $this->csm_foyer = $csm_foyer;
 
         return $this;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'foyer_id' => $this->getCsmFoyer(),
+            'litres' => $this->getCsmLitres(),
+            'date' => $this->getCsmDate(),
+        ];
     }
 }
