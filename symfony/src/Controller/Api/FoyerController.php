@@ -4,6 +4,7 @@ namespace App\Controller\Api;
 
 use App\Entity\Consommation;
 use App\Entity\Foyer;
+use App\Repository\ConsommationRepository;
 use App\Repository\FoyerRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -93,6 +94,28 @@ class FoyerController
         $foyer->addFoyConsommation($conso);
 
         $em->persist($foyer);
+        $em->flush();
+
+        return new JsonResponse($conso);
+    }
+
+
+    /**
+     * @Rest\Post(
+     *     path = "/foyers/consos/update/foyer={id}&litres={litres}",
+     *     name = "api_foyer_update_conso",
+     *     requirements = {"id"="\d+", "litres"="\d+"}
+     * )
+     */
+    public function editConso(FoyerRepository $foyerRepository, ConsommationRepository $consommationRepository, EntityManagerInterface $em, int $id, int $litres)
+    {
+        $today = new \DateTime();
+        $foyer = $foyerRepository->find($id);
+
+        $conso = $consommationRepository->getConsoOfTheDay($foyer, $today->format("Y-m-d"));
+        $conso->setCsmLitres($conso->getCsmLitres() + $litres);
+
+        $em->persist($conso);
         $em->flush();
 
         return new JsonResponse($conso);

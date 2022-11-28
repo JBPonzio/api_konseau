@@ -3,7 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Consommation;
+use App\Entity\Foyer;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -39,28 +41,17 @@ class ConsommationRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Consommation[] Returns an array of Consommation objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('c.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function getConsoOfTheDay(Foyer $foyer, string $date): Consommation
+    {
+        $qb = $this->createQueryBuilder('c');
+        $qb->where($qb->expr()->andX(
+                $qb->expr()->eq('c.csm_foyer',':foyer'),
+                $qb->expr()->eq('c.csm_date',':date'),
+            ))
+            ->setParameter('foyer', $foyer->getId())
+            ->setParameter('date', $date);
 
-//    public function findOneBySomeField($value): ?Consommation
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+        return $qb->getQuery()->getSingleResult();
+    }
+
 }
